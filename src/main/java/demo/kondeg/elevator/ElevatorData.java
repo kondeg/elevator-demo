@@ -1,5 +1,8 @@
 package demo.kondeg.elevator;
 
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
 /**
  * Created by kdegtiarenko on 2/10/2017.
  */
@@ -12,6 +15,25 @@ public class ElevatorData {
     private int currentPosition;
 
     private int elevatorId;
+
+    private int numberOfFloorTraveled = 0;
+
+    private int numberOfTrips = 0;
+
+    Queue<Request> requestQueue = new ConcurrentLinkedQueue<Request>();
+
+    private ElevatorData() {
+
+    }
+
+    public ElevatorData(int elevatorId) {
+        this.doorStatus = ElevatorDoorStatus.DOOR_CLOSED;
+        currentPosition = 1;
+        elevatorStatus = ElevatorStatus.IDLE;
+        numberOfFloorTraveled = 0;
+        numberOfTrips = 0;
+        this.elevatorId = elevatorId;
+    }
 
     public ElevatorStatus getElevatorStatus() {
         return elevatorStatus;
@@ -44,4 +66,22 @@ public class ElevatorData {
     public void setElevatorId(int elevatorId) {
         this.elevatorId = elevatorId;
     }
+
+    public int getNumberOfFloorTraveled() {
+        return numberOfFloorTraveled;
+    }
+
+    public void setNumberOfFloorTraveled(int numberOfFloorTraveled) {
+        this.numberOfFloorTraveled = numberOfFloorTraveled;
+    }
+
+    public int getNumberOfTrips() {
+        return numberOfTrips;
+    }
+
+    public void setNumberOfTrips(int numberOfTrips) {
+        this.numberOfTrips = numberOfTrips;
+    }
+
+
 }
