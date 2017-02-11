@@ -32,7 +32,7 @@ public class ElevatorController {
     }
 
     /**
-     * Start the elevator threads. It does not quite work, run out of time. But the idea is that each elevator runs asynchronously in its own thread monitoring
+     * Start the elevator threads.  But the idea is that each elevator runs asynchronously in its own thread monitoring
      * its queue. It picks up a request from its queue. Communication between elevator and parent thread is through a shared map which should be thread
      * safe implementation of the map
      *
