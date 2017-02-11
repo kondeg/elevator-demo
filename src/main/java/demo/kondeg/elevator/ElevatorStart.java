@@ -49,7 +49,11 @@ public class ElevatorStart {
 
         controller.startElevators();
 
-
+        try {
+            controller.processRequest(3);
+        } catch (ElevatorError elevatorError) {
+            elevatorError.printStackTrace();
+        }
 
         controller.stopElevators();
 

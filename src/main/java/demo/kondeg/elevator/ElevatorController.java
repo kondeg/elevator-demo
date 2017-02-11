@@ -31,27 +31,39 @@ public class ElevatorController {
 
     }
 
+    /**
+     * Start the elevator threads. It does not quite work, run out of time. But the idea is that each elevator runs asynchronously in its own thread monitoring
+     * its queue. It picks up a request from its queue. Communication between elevator and parent thread is through a shared map which should be thread
+     * safe implementation of the map
+     *
+     * Note: not finished, run out of time
+     *
+     */
     public void startElevators() {
 
         int i = 1;
 
         while (i<=numberOfElevators) {
 
-            ElevatorData elevatorData = new ElevatorData(i);
-
-            Elevator elevator = new Elevator(i, numberOfFloors, elevatorData);
+            Elevator elevator = new Elevator(i, numberOfFloors, runningElevatorMap);
 
             runningElevatorMap.put(elevator, new ElevatorData(i));
 
-            Thread elevatorThread = new Thread(elevator);
-
-            elevatorThread.start();
-
-            elevatorList.add(elevatorThread);
-
             i++;
 
+
+
         }
+
+        for (Elevator elevator: runningElevatorMap.keySet()) {
+
+            Thread thread = new Thread(elevator);
+
+            thread.start();
+
+        }
+
+
 
         for (Thread thread : elevatorList) {
 
@@ -77,6 +89,17 @@ public class ElevatorController {
 
     }
 
+    /**
+     * Go throught the shared elevator map. Pick a preferred elevator based on current status, add request to the queue of preferred elevator.
+     * The idea is that the elevator should pick up the request from its queue asynchronously. Each elevator has its own object in the map
+     * that contains its current status. It also has a strategy for calculating a response to a requested floor. This method analyzes the responses
+     * to pick the best candidate
+     *
+     * Note: not finished, run out of time.
+     *
+     * @param floor
+     * @throws ElevatorError
+     */
     public void processRequest(int floor) throws ElevatorError {
 
         System.out.println("Processing request for floor "+floor);
@@ -105,11 +128,6 @@ public class ElevatorController {
 
             Response response =  runningElevatorMap.get(elevator).processRequest(currentRequest);
 
-            //System.out.println("Response from "+response.getElevatorId());
-
-            //System.out.println(response.getResponseCode());
-
-            //System.out.println(response.getFloorsAway());
 
             if (response.getResponseCode() == Response.ResponseCode.IDLE_SAME_FLOOR) {
 

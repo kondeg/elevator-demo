@@ -1,5 +1,7 @@
 package demo.kondeg.elevator;
 
+import java.util.Map;
+
 /**
  * Created by kdegtiarenko on 2/10/2017.
  */
@@ -9,7 +11,7 @@ public class Elevator implements Runnable {
 
     private int maxFloor;
 
-    private ElevatorData elevatorData;
+    Map<Elevator, ElevatorData> sharedStatusMap;
 
     private int elevatorId;
 
@@ -18,26 +20,26 @@ public class Elevator implements Runnable {
 
     private Elevator(){}
 
-    public Elevator(int elevatorId, int maxFloor, ElevatorData elevatorData) {
+    public Elevator(int elevatorId, int maxFloor, Map<Elevator, ElevatorData> sharedStatusMap) {
 
         this.elevatorId = elevatorId;
 
         this.maxFloor = maxFloor;
 
-        this.elevatorData = elevatorData;
+        this.sharedStatusMap = sharedStatusMap;
     }
 
     public void run() {
 
         System.out.println("Starting elevator "+getElevatorId());
 
-        System.out.println("Elevator Status "+elevatorData.getElevatorStatus());
+        System.out.println("Elevator Status "+sharedStatusMap.get(this).getElevatorStatus());
 
-        while (!elevatorData.getElevatorStatus().equals(ElevatorStatus.MAINTENANCE)) {
+        while (!sharedStatusMap.get(this).getElevatorStatus().equals(ElevatorStatus.MAINTENANCE)) {
 
-            if (!elevatorData.isQueueEmpty()) {
+            if (!sharedStatusMap.get(this).isQueueEmpty()) {
 
-                currentRequest = elevatorData.removeFromQueue();
+                currentRequest = sharedStatusMap.get(this).removeFromQueue();
 
                 System.out.println("Dispatching elevator "+getElevatorId()+" to "+currentRequest.getFloorRequested());
 
@@ -55,7 +57,7 @@ public class Elevator implements Runnable {
                 openDoor();
 
 
-                elevatorData.setElevatorStatus(ElevatorStatus.IDLE);
+                sharedStatusMap.get(this).setElevatorStatus(ElevatorStatus.IDLE);
 
             }
 
@@ -73,7 +75,7 @@ public class Elevator implements Runnable {
 
         System.out.println("Elevator "+getElevatorId()+" door open");
 
-        elevatorData.setDoorStatus(ElevatorDoorStatus.DOOR_OPEN);
+        sharedStatusMap.get(this).setDoorStatus(ElevatorDoorStatus.DOOR_OPEN);
 
     }
 
@@ -81,7 +83,7 @@ public class Elevator implements Runnable {
 
         System.out.println("Elevator "+getElevatorId()+" door closed");
 
-        elevatorData.setDoorStatus(ElevatorDoorStatus.DOOR_CLOSED);
+        sharedStatusMap.get(this).setDoorStatus(ElevatorDoorStatus.DOOR_CLOSED);
 
     }
 
@@ -91,31 +93,31 @@ public class Elevator implements Runnable {
             throw new ElevatorError("Invalid floor number "+floor);
 
         }
-        if (elevatorData.getCurrentPosition()>floor) {
-            elevatorData.setElevatorStatus(ElevatorStatus.MOVING_DOWN);
-        } else if (elevatorData.getCurrentPosition()<floor) {
-            elevatorData.setElevatorStatus(ElevatorStatus.MOVING_UP);
+        if (sharedStatusMap.get(this).getCurrentPosition()>floor) {
+            sharedStatusMap.get(this).setElevatorStatus(ElevatorStatus.MOVING_DOWN);
+        } else if (sharedStatusMap.get(this).getCurrentPosition()<floor) {
+            sharedStatusMap.get(this).setElevatorStatus(ElevatorStatus.MOVING_UP);
         }
 
-        while(floor!=elevatorData.getCurrentPosition()) {
+        while(floor!=sharedStatusMap.get(this).getCurrentPosition()) {
 
-            if(elevatorData.getElevatorStatus().equals(ElevatorStatus.MOVING_UP)) {
-                elevatorData.setCurrentPosition(elevatorData.getCurrentPosition()+1);
-                elevatorData.setNumberOfFloorTraveled(elevatorData.getNumberOfFloorTraveled()+1);
-                System.out.println("Elevator "+getElevatorId()+" Position: "+elevatorData.getCurrentPosition()+" Destination: "+floor+" Number Of Floors Traveled: "+elevatorData.getNumberOfFloorTraveled());
+            if(sharedStatusMap.get(this).getElevatorStatus().equals(ElevatorStatus.MOVING_UP)) {
+                sharedStatusMap.get(this).setCurrentPosition(sharedStatusMap.get(this).getCurrentPosition()+1);
+                sharedStatusMap.get(this).setNumberOfFloorTraveled(sharedStatusMap.get(this).getNumberOfFloorTraveled()+1);
+                System.out.println("Elevator "+getElevatorId()+" Position: "+sharedStatusMap.get(this).getCurrentPosition()+" Destination: "+floor+" Number Of Floors Traveled: "+sharedStatusMap.get(this).getNumberOfFloorTraveled());
 
-            } else if(elevatorData.getElevatorStatus().equals(ElevatorStatus.MOVING_DOWN)) {
-                elevatorData.setCurrentPosition(elevatorData.getCurrentPosition()-1);
-                elevatorData.setNumberOfFloorTraveled(elevatorData.getNumberOfFloorTraveled()+1);
-                System.out.println("Elevator "+getElevatorId()+" Position: "+elevatorData.getCurrentPosition()+" Destination: "+floor+" Number Of Floors Traveled: "+elevatorData.getNumberOfFloorTraveled());
+            } else if(sharedStatusMap.get(this).getElevatorStatus().equals(ElevatorStatus.MOVING_DOWN)) {
+                sharedStatusMap.get(this).setCurrentPosition(sharedStatusMap.get(this).getCurrentPosition()-1);
+                sharedStatusMap.get(this).setNumberOfFloorTraveled(sharedStatusMap.get(this).getNumberOfFloorTraveled()+1);
+                System.out.println("Elevator "+getElevatorId()+" Position: "+sharedStatusMap.get(this).getCurrentPosition()+" Destination: "+floor+" Number Of Floors Traveled: "+sharedStatusMap.get(this).getNumberOfFloorTraveled());
             }
 
         }
 
-        int numberOfTrips = elevatorData.getNumberOfTrips()+1;
-        elevatorData.setNumberOfTrips(numberOfTrips);
+        int numberOfTrips = sharedStatusMap.get(this).getNumberOfTrips()+1;
+        sharedStatusMap.get(this).setNumberOfTrips(numberOfTrips);
         if (numberOfTrips>=100) {
-            elevatorData.setElevatorStatus(ElevatorStatus.MAINTENANCE);
+            sharedStatusMap.get(this).setElevatorStatus(ElevatorStatus.MAINTENANCE);
         }
         openDoor();
     }
