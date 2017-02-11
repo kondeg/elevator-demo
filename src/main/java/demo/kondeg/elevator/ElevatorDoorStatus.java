@@ -3,7 +3,8 @@ package demo.kondeg.elevator;
 /**
  * Created by kdegtiarenko on 2/10/2017.
  */
-public enum ElevatorStatus {
+public enum ElevatorDoorStatus {
 
-    IDLE, MOVING_UP, MOVING_DOWN, MAINTENANCE
+    DOOR_OPEN, DOOR_CLOSED, MALFUNCTION;
+
 }

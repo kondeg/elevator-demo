@@ -20,24 +20,32 @@ public class ElevatorStart {
         System.out.println("Please enter number of floors and press ENTER:");
 
         try {
+
             numberOfFloors = Integer.parseInt(userInput.next());
+
         } catch (NumberFormatException e) {
+
             System.out.println("Invalid Input: You did not enter a number. Exiting.");
+
             return;
         }
 
         System.out.println("Please enter number of elevators and press ENTER:");
 
         try {
+
             numberOfElevators = Integer.parseInt(userInput.next());
+
         } catch (NumberFormatException e) {
+
             System.out.println("Invalid Input: You did not enter a number. Exiting.");
+
             return;
         }
 
         System.out.println("--- Starting Elevator Controller --");
 
-
+        ElevatorController controller = new ElevatorController(numberOfFloors, numberOfElevators);
 
 
 
