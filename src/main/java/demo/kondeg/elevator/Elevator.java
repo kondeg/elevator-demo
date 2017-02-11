@@ -3,7 +3,7 @@ package demo.kondeg.elevator;
 /**
  * Created by kdegtiarenko on 2/10/2017.
  */
-public class Elevator  {
+public class Elevator implements Runnable {
 
     private final int minFloor = 1;
 
@@ -27,9 +27,11 @@ public class Elevator  {
         this.elevatorData = elevatorData;
     }
 
-    public void start() {
+    public void run() {
 
         System.out.println("Starting elevator "+getElevatorId());
+
+        System.out.println("Elevator Status "+elevatorData.getElevatorStatus());
 
         while (!elevatorData.getElevatorStatus().equals(ElevatorStatus.MAINTENANCE)) {
 
@@ -123,4 +125,11 @@ public class Elevator  {
         return elevatorId;
     }
 
+    public boolean equals (Object object) {
+        if(object instanceof Elevator && ((Elevator)object).getElevatorId() == this.getElevatorId()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

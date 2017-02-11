@@ -35,6 +35,34 @@ public class ElevatorData {
         this.elevatorId = elevatorId;
     }
 
+    public Response processRequest(Request request) {
+        Response response = new Response(elevatorId);
+        if (elevatorStatus == ElevatorStatus.IDLE) {
+            int floorsAway = Math.abs(currentPosition - request.getFloorRequested());
+            response.setFloorsAway(floorsAway);
+            if (response.getFloorsAway()==0) {
+                response.setResponseCode(Response.ResponseCode.IDLE_SAME_FLOOR);
+            } else {
+                response.setResponseCode(Response.ResponseCode.IDLE);
+            }
+        } else if (elevatorStatus == ElevatorStatus.MOVING_DOWN) {
+            if (currentPosition >= request.getFloorRequested()) {
+                response.setResponseCode(Response.ResponseCode.PASSING);
+                response.setFloorsAway(currentPosition - request.getFloorRequested());
+            }
+        } else if (elevatorStatus == ElevatorStatus.MOVING_UP) {
+            if (currentPosition <= request.getFloorRequested()) {
+                response.setResponseCode(Response.ResponseCode.PASSING);
+                response.setFloorsAway(currentPosition - request.getFloorRequested());
+            }
+        } else {
+
+            //Do some other algorithm
+
+        }
+        return response;
+    }
+
     public void addToQueue(Request request) {
 
         requestQueue.add(request);
@@ -54,19 +82,19 @@ public class ElevatorData {
 
 
 
-    public ElevatorStatus getElevatorStatus() {
+    public synchronized ElevatorStatus getElevatorStatus() {
         return elevatorStatus;
     }
 
-    public void setElevatorStatus(ElevatorStatus elevatorStatus) {
+    public synchronized void setElevatorStatus(ElevatorStatus elevatorStatus) {
         this.elevatorStatus = elevatorStatus;
     }
 
-    public ElevatorDoorStatus getDoorStatus() {
+    public synchronized ElevatorDoorStatus getDoorStatus() {
         return doorStatus;
     }
 
-    public void setDoorStatus(ElevatorDoorStatus doorStatus) {
+    public synchronized void setDoorStatus(ElevatorDoorStatus doorStatus) {
         this.doorStatus = doorStatus;
     }
 

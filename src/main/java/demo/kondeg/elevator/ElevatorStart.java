@@ -51,6 +51,7 @@ public class ElevatorStart {
 
 
 
+        controller.stopElevators();
 
         System.out.println("--- Finished Elevator Controller --");
 
