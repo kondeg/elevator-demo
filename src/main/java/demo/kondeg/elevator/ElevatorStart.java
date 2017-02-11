@@ -47,7 +47,7 @@ public class ElevatorStart {
 
         ElevatorController controller = new ElevatorController(numberOfFloors, numberOfElevators);
 
-
+        controller.startElevators();
 
 
 

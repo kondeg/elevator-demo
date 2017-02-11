@@ -20,7 +20,7 @@ public class ElevatorData {
 
     private int numberOfTrips = 0;
 
-    Queue<Request> requestQueue = new ConcurrentLinkedQueue<Request>();
+    private Queue<Request> requestQueue = new ConcurrentLinkedQueue<Request>();
 
     private ElevatorData() {
 
@@ -34,6 +34,25 @@ public class ElevatorData {
         numberOfTrips = 0;
         this.elevatorId = elevatorId;
     }
+
+    public void addToQueue(Request request) {
+
+        requestQueue.add(request);
+
+    }
+
+    public Request removeFromQueue() {
+
+        return requestQueue.remove();
+
+    }
+
+    public boolean isQueueEmpty() {
+
+        return requestQueue.isEmpty();
+    }
+
+
 
     public ElevatorStatus getElevatorStatus() {
         return elevatorStatus;

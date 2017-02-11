@@ -14,6 +14,8 @@ public class ElevatorController {
 
     int numberOfElevators;
 
+    Request currentRequest;
+
     private ElevatorController(){};
 
     public ElevatorController(int numberOfFloors, int numberOfElevators) {
@@ -30,10 +32,31 @@ public class ElevatorController {
 
         while (i<=numberOfElevators) {
 
-            Elevator elevator = new Elevator(i, numberOfFloors);
+            ElevatorData elevatorData = new ElevatorData(i);
+
+            Elevator elevator = new Elevator(i, numberOfFloors, elevatorData);
 
             elevatorList.add(elevator);
 
+            elevator.start();
+
+        }
+
+
+
+    }
+
+    public void processRequest(int floor) throws ElevatorError {
+
+        System.out.println("Processing request for floor "+floor);
+
+        if (floor<1 || floor > numberOfFloors) {
+
+            throw new ElevatorError("Invalid number of floors");
+
+        } else {
+
+            currentRequest = new Request(floor);
 
         }
 
